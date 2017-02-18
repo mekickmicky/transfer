@@ -1,0 +1,220 @@
+<html>
+<head>
+	<title>Transfer</title>
+	<meta charset="utf-8">
+</head>
+
+<style type="text/css">
+body{
+	margin: 0;
+	padding: 0;
+	background: #222;
+	color: #fff;
+}
+.wrap{
+	width: 500px;
+	margin: 12% auto 0;
+	background: #555;
+	border-radius: 20px;
+	box-shadow: 10px 10px 5px #000;
+	padding: 50px;
+	font-size: 40px;
+}
+.wrap input{
+	width: 300px;
+	height: 50px;
+	font-size: 30px;
+	padding: 10px 20px;
+	border-radius: 10px;
+	border: 2px solid #fff;
+	background: #555;
+	color: #fff;
+	margin-bottom: 20px;
+}
+.wrap select{
+	width: 229px;
+	height: 50px;
+	font-size: 20px;
+	padding: 10px 20px;
+	border-radius: 10px;
+	border: 2px solid #fff;
+	background: #555;
+	color: #fff;
+}
+.wrap .result{
+	margin-top: 20px;
+	width: 457px;
+	height: 50px;
+	font-size: 35px;
+	padding: 10px 20px;
+	border-radius: 10px;
+	border: 2px solid #fff;
+	background: #555;
+	color: #fff;
+	text-align: center;
+}
+</style>
+
+<body>
+	<div class="wrap">
+		จำนวนเงิน : <input id="money" type="number" name="txtNumber" onChange="cal()">
+		<select id="cal1" onchange="cal()">
+			<option></option>
+			<option value="thb">บาทไทย (THB)</option>
+			<option value="cny">หยวนจีน (CNY)</option>
+			<option value="gbp">ปอนด์ (GBP)</option>
+			<option value="hkd">ดอลลาร์ฮ่องกง (HKD)</option>
+		</select><span style="font-size:20px;"> เป็น </span>
+		<select id="cal2" onchange="cal()">
+			<option></option>
+			<option value="thb">บาทไทย (THB)</option>
+			<option value="cny">หยวนจีน (CNY)</option>
+			<option value="gbp">ปอนด์ (GBP)</option>
+			<option value="hkd">ดอลลาร์ฮ่องกง (HKD)</option>
+		</select>
+
+		<div id="result" class="result">
+
+		</div>
+
+	</div>
+</body>
+</html>
+
+
+<script>
+var myObj, myJSON, text, obj;
+
+//Storing data:
+mtrans = { 
+	  "thbzgbp":0.023015722
+	, "thbzhkd":0.22166474
+	, "thbzcny":0.196336
+
+	, "hkdzgbp":0.10383122
+	, "hkdzthb":4.5113175
+	, "hkdzcny":0.885734
+
+	, "gbpzthb":43.4485625
+	, "gbpzhkd":9.631014
+	, "gbpzcny":8.53052
+
+	, "cnyzthb":5.09330825
+	, "cnyzgbp":0.11722616
+	, "cnyzhkd":1.1290068
+	 };
+mtransJSON = JSON.stringify(mtrans);
+localStorage.setItem("mtrans", mtransJSON);
+
+//Retrieving data:
+mtext = localStorage.getItem("mtrans");
+obj = JSON.parse(mtext);
+
+function addCommas(nStr){
+nStr += '';
+x = nStr.split('.');
+x1 = x[0];
+x2 = x.length > 1 ? '.' + x[1] : '';
+var rgx = /(\d+)(\d{3})/;
+while (rgx.test(x1)) {
+x1 = x1.replace(rgx, '$1' + ',' + '$2');
+}
+return x1 + x2;
+}
+
+ 
+function chkNum(ele)
+{
+var num = parseFloat(ele.value);
+ele.value = addCommas(num.toFixed(2));
+}
+
+function cal () {
+	var m1 = document.getElementById("cal1").value;
+	var m2 = document.getElementById("cal2").value;
+	var inp = document.getElementById("money").value;
+	
+	if (m1 != null && m2 != null && isNaN(parseFloat(inp)) == false) {
+	var inp = parseFloat(inp);
+		if (m1=="thb"&&m2=="hkd") {
+			a = obj.thbzhkd * inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " ดอลลาร์ฮ่องกง (HKD)";
+		};
+		if (m1=="thb"&&m2=="gbp") {
+			a = obj.thbzgbp*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " ปอนด์ (GBP)";
+		};
+		if (m1=="thb"&&m2=="cny") {
+			a = obj.thbzcny*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " หยวนจีน (CNY)";
+		};
+
+		if (m1=="hkd"&&m2=="thb") {
+			a = obj.hkdzthb*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " บาทไทย (THB)";
+		};
+		if (m1=="hkd"&&m2=="gbp") {
+			a = obj.hkdzgbp*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " ปอนด์ (GBP)";
+		};
+		if (m1=="hkd"&&m2=="cny") {
+			a = obj.hkdzcny*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " หยวนจีน (CNY)";
+		};
+		
+		if (m1=="gbp"&&m2=="thb") {
+			a = obj.gbpzthb*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " บาทไทย (THB)";
+		};
+		if (m1=="gbp"&&m2=="hkd") {
+			a = obj.gbpzhkd*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " ดอลลาร์ฮ่องกง (HKD)";
+		};
+		if (m1=="gbp"&&m2=="cny") {
+			a = obj.gbpzcny*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " หยวนจีน (CNY)";
+		};
+		
+		if (m1=="cny"&&m2=="thb") {
+			a = obj.cnyzthb*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " บาทไทย (THB)";
+		};
+		if (m1=="cny"&&m2=="hkd") {
+			a = obj.cnyzhkd*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " ดอลลาร์ฮ่องกง (HKD)";
+		};
+		if (m1=="cny"&&m2=="gbp") {
+			a = obj.cnyzgbp*inp;
+			a = a.toFixed( 2 );
+			a = addCommas(a);
+			document.getElementById("result").innerHTML = a+ " ปอนด์ (GBP)";
+		};
+
+	};
+	if (m1==m2) {
+			alert("โปรดใส่ค่าเงินอื่น");
+		};
+}
+</script>
